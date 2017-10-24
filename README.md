@@ -1,4 +1,5 @@
-#Purley GpioAddress  
+# Purley GpioAddress  
+
 ```
 GPP_A   : 0xFDAF0400  
 GPP_B   : 0xFDAF04C0  
