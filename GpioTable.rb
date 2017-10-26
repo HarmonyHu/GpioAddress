@@ -357,9 +357,11 @@ mGpioTableNeonCityEP.each{ |item|
 	puts string
 }
 =end
+$InterFile = "interfile.txt"
+$OutFile = "new_gpio.txt"
 if ARGV.count == 1
 	inFile = File.new(ARGV[0],"r:utf-8")
-	outFile = File.new("out.txt","w:utf-8")
+	outFile = File.new("#{$InterFile}","w:utf-8")
 	inFile.each {|line|
 		line.sub!(/(UINT32\()(0x\w+)(\))(,\s+)(\w+)(,\s+)(\w+)(,\s+)(\w+)(,\s+)(\w+)/){
 			GPIO_PAD.invert[eval($2)] + $4 + 
@@ -367,6 +369,21 @@ if ARGV.count == 1
 			GPIO_HOSTSW_OWN.invert[eval($7)] + $8 + 
 			GPIO_DIRECTION.invert[eval($9)] + $10 + 
 			GPIO_OUTPUT_STATE.invert[eval($11)]
+		}
+		outFile.puts line
+	}
+	inFile.close
+	outFile.close
+elsif ARGV.count == 0
+	inFile = File.new("#{$InterFile}","r:utf-8")
+	outFile = File.new("#{$OutFile}","w:utf-8")
+	inFile.each {|line|
+		line.sub!(/(\w+)(,\s+)(\w+)(,\s+)(\w+)(,\s+)(\w+)(,\s+)(\w+)/){
+			"UINT32(0x%08X)"%GPIO_PAD[$1] + $2 + 
+			"0x%02X"%GPIO_PAD_MODE[$3] + $4 + 
+			"0x%02X"%GPIO_HOSTSW_OWN[$5] + $6 + 
+			"0x%02X"%GPIO_DIRECTION[$7] + $8 + 
+			"0x%02X"%GPIO_OUTPUT_STATE[$9]
 		}
 		outFile.puts line
 	}
